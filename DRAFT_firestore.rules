@@ -1,0 +1,138 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Catch-all default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // Bootstrapped Admin
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email in ["kagemasamuel5@gmail.com", "africatalentarena5@gmail.com"];
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- Validation Blueprints ---
+    function isValidUser(data, uid) {
+      return data.keys().hasAll(['email', 'totalVotes', 'favorites']) &&
+             data.keys().size() == 3 &&
+             data.email is string && data.email.size() <= 200 &&
+             data.totalVotes is number && data.totalVotes >= 0 &&
+             data.favorites is list && data.favorites.size() <= 100 &&
+             (data.favorites.size() > 0 ? (data.favorites[0] is string && data.favorites[0].size() <= 128) : true);
+    }
+
+    function isValidPerformer(data) {
+      return data.keys().hasAll(['name', 'country', 'img', 'voteCount', 'category', 'videoUrl']) &&
+             data.keys().size() == 6 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.country is string && data.country.size() > 0 && data.country.size() <= 100 &&
+             data.img is string && data.img.size() <= 1000 &&
+             data.category is string && data.category.size() <= 50 &&
+             data.voteCount is number && data.voteCount >= 0 &&
+             data.videoUrl is string && data.videoUrl.size() <= 1000;
+    }
+
+    function isValidVote(data) {
+      return data.keys().hasAll(['userId', 'performerId', 'timestamp']) &&
+             data.keys().size() == 3 &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.performerId is string && data.performerId.size() <= 128 &&
+             data.timestamp == request.time;
+    }
+
+    function isValidComment(data) {
+      return data.keys().hasAll(['userId', 'userName', 'userPhoto', 'performerId', 'text', 'timestamp']) &&
+             data.keys().size() == 6 &&
+             data.userId is string && data.userId == request.auth.uid &&
+             data.userName is string && data.userName.size() <= 100 &&
+             data.userPhoto is string && data.userPhoto.size() <= 1000 &&
+             data.performerId is string && data.performerId.size() <= 128 &&
+             data.text is string && data.text.size() > 0 && data.text.size() <= 500 &&
+             data.timestamp == request.time;
+    }
+
+    // --- Collections ---
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      
+      allow create: if isSignedIn() && 
+                    isValidId(userId) && 
+                    userId == request.auth.uid && 
+                    isValidUser(incoming(), userId) &&
+                    incoming().totalVotes == 0 &&
+                    incoming().favorites.size() == 0;
+
+      allow update: if isSignedIn() && isValidId(userId) && userId == request.auth.uid && 
+                    isValidUser(incoming(), userId) && (
+        (incoming().diff(existing()).affectedKeys().hasOnly(['favorites'])) 
+        ||
+        (incoming().diff(existing()).affectedKeys().hasOnly(['totalVotes']) &&
+         incoming().totalVotes == existing().totalVotes + 1 &&
+         incoming().totalVotes <= 5)
+      );
+    }
+
+    match /performers/{performerId} {
+      // Anyone signed in or anonymous can read? App shows it without login. So public read.
+      allow read: if true;
+      allow list: if true;
+
+      allow create: if isAdmin() && 
+                    isValidId(performerId) && 
+                    isValidPerformer(incoming());
+
+      allow update: if isValidId(performerId) && 
+                    isValidPerformer(incoming()) && (
+        isAdmin() ||
+        (isSignedIn() && 
+         incoming().diff(existing()).affectedKeys().hasOnly(['voteCount']) && 
+         incoming().voteCount == existing().voteCount + 1 &&
+         existsAfter(/databases/$(database)/documents/votes/$(request.auth.uid + "_" + performerId)))
+      );
+    }
+
+    match /votes/{voteId} {
+      // Users can list their own votes for history
+      allow read, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      allow create: if isSignedIn() && 
+                    isValidId(voteId) && 
+                    isValidVote(incoming()) &&
+                    voteId == request.auth.uid + "_" + incoming().performerId &&
+                    exists(/databases/$(database)/documents/performers/$(incoming().performerId)) &&
+                    getAfter(/databases/$(database)/documents/users/$(request.auth.uid)).data.totalVotes <= 5;
+    }
+
+    match /comments/{commentId} {
+      // Can list comments for a performer 
+      allow read, list: if true;
+      
+      allow create: if isSignedIn() && 
+                    isValidId(commentId) && 
+                    isValidComment(incoming()) &&
+                    exists(/databases/$(database)/documents/performers/$(incoming().performerId));
+    }
+
+    match /test/{docId} {
+      allow read: if true;
+    }
+  }
+}

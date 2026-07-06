@@ -1,0 +1,540 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Africa’s Talent Arena (ATA) – One Stage. Infinite Talents.</title>
+  <meta name="description" content="Africa’s Talent Arena (ATA) is the premier platform for discovering and showcasing Africa’s brightest talents. Submit your 2‑minute video today and join the movement — One Stage. Infinite Talents.">
+  <style>
+    /* Global Reset & Theme */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { 
+      font-family: 'Montserrat', 'Segoe UI', Helvetica, Arial, sans-serif; 
+      background: #0d0a05 linear-gradient(135deg, #0d0a05 0%, #1a1202 50%, #0d0a05 100%);
+      color: #f5f5f5; 
+      line-height: 1.7; 
+    }
+    
+    /* Dynamic Hero Header */
+    header { 
+      position: relative;
+      background: radial-gradient(circle at center, rgba(212, 175, 55, 0.15) 0%, transparent 70%), #050505;
+      padding: 60px 20px; 
+      text-align: center; 
+      border-bottom: 3px solid #d4af37;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=1200') center/cover no-repeat;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    header img.logo { 
+      max-width: 320px; 
+      width: 100%;
+      height: auto; 
+      margin-bottom: 20px; 
+      filter: drop-shadow(0px 0px 25px rgba(212, 175, 55, 0.6));
+      animation: pulse 3s infinite alternate;
+    }
+    header h1 { 
+      font-size: 2.8rem; 
+      text-transform: uppercase; 
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.5), 0 0 20px rgba(212, 175, 55, 0.3);
+      font-weight: 900;
+    }
+    header p { 
+      color: #d4af37; 
+      margin-top: 10px; 
+      font-size: 1.4rem; 
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    /* Sticky Navigation */
+    nav { 
+      background: rgba(15, 15, 15, 0.95); 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000; 
+      display: flex; 
+      justify-content: center; 
+      flex-wrap: wrap; 
+      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+      backdrop-filter: blur(10px);
+    }
+    nav a { 
+      color: #eee; 
+      padding: 18px 24px; 
+      text-decoration: none; 
+      font-weight: 700; 
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    nav a:hover { 
+      background: #d4af37; 
+      color: #000; 
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Sections */
+    section { 
+      padding: 80px 20px; 
+      max-width: 1000px; 
+      margin: auto; 
+    }
+    
+    /* Headings */
+    h2 { 
+      color: #fff; 
+      font-size: 2.2rem; 
+      margin-bottom: 35px; 
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      text-align: center;
+    }
+    h2::after { 
+      content: ''; 
+      display: block;
+      width: 80px; 
+      height: 4px; 
+      background: linear-gradient(90deg, transparent, #d4af37, transparent); 
+      margin: 10px auto 0 auto;
+    }
+
+    /* Glassmorphism Cards Container */
+    .card-profile {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 16px;
+      padding: 40px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Process Flow Cards */
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+    .step-card {
+      background: rgba(212, 175, 55, 0.05);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .step-card:hover {
+      transform: translateY(-5px);
+      border-color: #d4af37;
+    }
+    .step-badge {
+      background: #d4af37;
+      color: #000;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin: 0 auto 15px auto;
+      font-size: 1.2rem;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+
+    /* QR Code Section Split */
+    .submission-split {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 30px;
+      align-items: start;
+    }
+    .qr-container {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .qr-container img {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+    .qr-container p {
+      color: #111111;
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Form Setup */
+    form { 
+      background: rgba(0, 0, 0, 0.4); 
+      padding: 35px; 
+      border: 2px dashed rgba(212, 175, 55, 0.4); 
+      border-radius: 12px; 
+    }
+    label { 
+      display: block; 
+      margin-top: 20px; 
+      font-weight: 600; 
+      color: #d4af37;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+    label:first-of-type { margin-top: 0; }
+    
+    input[type="text"], input[type="email"] { 
+      width: 100%; 
+      padding: 14px; 
+      margin-top: 8px;
+      border: 1px solid rgba(255,255,255,0.15); 
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border-radius: 6px; 
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    input[type="text"]:focus, input[type="email"]:focus { 
+      border-color: #d4af37; 
+      background: rgba(255, 255, 255, 0.08);
+      outline: none; 
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+    
+    .file-input-wrapper {
+      position: relative;
+      margin-top: 8px;
+      background: rgba(212, 175, 55, 0.03);
+      border: 1px dashed rgba(212, 175, 55, 0.3);
+      padding: 20px;
+      text-align: center;
+      border-radius: 6px;
+    }
+
+    /* Terms checkbox styling */
+    .consent-wrapper {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(255,255,255,0.02);
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(212, 175, 55, 0.1);
+    }
+    .consent-wrapper input[type="checkbox"] {
+      margin-top: 5px;
+      transform: scale(1.2);
+      accent-color: #d4af37;
+      cursor: pointer;
+    }
+    .consent-wrapper label {
+      margin-top: 0;
+      color: #ccc;
+      font-size: 0.85rem;
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+    }
+    
+    button { 
+      background: linear-gradient(180deg, #f3cd44 0%, #d4af37 100%);
+      color: #000; 
+      border: none; 
+      padding: 16px 30px; 
+      margin-top: 20px; 
+      cursor: pointer; 
+      font-weight: 800; 
+      font-size: 1.1rem; 
+      border-radius: 30px; 
+      text-transform: uppercase; 
+      letter-spacing: 1px; 
+      transition: all 0.3s ease; 
+      width: 100%;
+      box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+    }
+    button:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+    }
+
+    /* Media & Live Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+    .gallery-item {
+      position: relative;
+      background: #151515;
+      height: 200px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      border-radius: 12px;
+      padding: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      transition: transform 0.4s ease, border-color 0.4s ease;
+    }
+    .gallery-item::before {
+      content: '';
+      position: absolute;
+      top:0; left:0; width:100%; height:100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 70%);
+      z-index: 1;
+    }
+    .gallery-item span {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      border-left: 3px solid #d4af37;
+      padding-left: 10px;
+    }
+    .gallery-item:hover {
+      transform: scale(1.03);
+      border-color: #d4af37;
+    }
+
+    /* Event Timeline Items */
+    .event-card {
+      background: rgba(255,255,255,0.02);
+      border-left: 4px solid #d4af37;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 0 8px 8px 0;
+    }
+    .event-card strong { color: #d4af37; font-size: 1.1rem; }
+
+    /* Contact Block & Social Styling */
+    .contact-details {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+    .contact-details a { color: #fff; text-decoration: none; border-bottom: 1px dashed #d4af37; }
+    .contact-details a:hover { color: #d4af37; }
+    
+    .social-cluster { 
+      display: flex; 
+      justify-content: center; 
+      gap: 15px; 
+      flex-wrap: wrap;
+      margin-top: 30px; 
+    }
+    .social-cluster a { 
+      color: #fff; 
+      background: rgba(255,255,255,0.05); 
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      padding: 12px 30px; 
+      border-radius: 30px; 
+      font-weight: 700; 
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+    .social-cluster a:hover { 
+      background: #d4af37; 
+      color: #000; 
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+    }
+    
+    .hash-footer {
+      text-align: center;
+      color: rgba(212, 175, 55, 0.7);
+      font-weight: 700;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+    footer { 
+      background: #050505; 
+      color: #777; 
+      text-align: center; 
+      padding: 35px 20px; 
+      font-size: 0.9rem;
+      border-top: 1px solid #151515;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0px 0px 20px rgba(212, 175, 55, 0.4)); }
+      100% { transform: scale(1.02); filter: drop-shadow(0px 0px 30px rgba(212, 175, 55, 0.7)); }
+    }
+
+    /* Responsive Setup */
+    @media(max-width: 850px) {
+      .submission-split { grid-template-columns: 1fr; }
+      .qr-container { max-width: 300px; margin: 0 auto; }
+    }
+    @media(max-width: 768px) {
+      header h1 { font-size: 2rem; }
+      header p { font-size: 1.1rem; }
+      nav a { padding: 14px 16px; font-size: 0.8rem; }
+      section { padding: 50px 15px; }
+      .card-profile { padding: 25px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="/attachments/So2EEBiWNY2ERHTwKMhiR.jpeg" alt="Africa’s Talent Arena Logo" class="logo">
+  <h1>One Stage. Infinite Talents.</h1>
+  <p>Welcome to Africa’s Talent Arena (ATA)</p>
+</header>
+
+<nav>
+  <a href="#about">About ATA</a>
+  <a href="#join">Join Us</a>
+  <a href="#gallery">Talent Gallery</a>
+  <a href="#events">Events</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<section id="about">
+  <div class="card-profile">
+    <h2>About ATA</h2>
+    <p style="font-size: 1.15rem; text-align: center; margin-bottom: 25px;">
+      Africa’s Talent Arena is more than a competition — it’s a continental movement[cite: 33]. We believe every talent deserves a spotlight, every voice deserves to be heard, and every dream deserves a chance to shine.
+    </p>
+    <div style="background: rgba(212,175,55,0.08); padding: 20px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.2);">
+      <p><strong>Vision:</strong> To empower diverse talents across Africa by providing a fair, inclusive, and inspiring platform that connects creativity with opportunity[cite: 140]. All performance categories—from singing, dancing, and comedy to acrobatics, poetry, and tech innovations—are welcome to showcase their unique skills[cite: 10].</p>
+    </div>
+  </div>
+</section>
+
+<section id="join">
+  <h2>Join The Movement</h2>
+  <div class="card-profile">
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-badge">1</div>
+        <p><strong>Record</strong> a clear and original 2‑minute video showing your raw talent[cite: 5, 7].</p>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">2</div>
+        <p><strong>Upload</strong> below, scan the QR code, or send via official channels[cite: 157].</p>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">3</div>
+        <p><strong>Tag Us</strong> online using our official campaign hashtags[cite: 32, 53].</p>
+      </div>
+    </div>
+
+    <div class="submission-split">
+      <form id="uploadForm" action="https://formspree.io/f/xoqgpepd" method="POST" enctype="multipart/form-data">
+        <label for="name">Your Stage/Full Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+
+        <label for="email">Your Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+        <label for="video">Upload Your 2‑Minute Video:</label>
+        <div class="file-input-wrapper">
+          <input type="file" id="video" name="video" accept="video/*" required>
+        </div>
+
+        <div class="consent-wrapper">
+          <input type="checkbox" id="consent" name="consent" required>
+          <label for="consent">I confirm that I am submitting voluntarily [cite: 104, 109], my act complies with ethical rules and laws [cite: 110], I grant ATA promotion rights [cite: 112], and I accept that judges' decisions are final[cite: 114].</label>
+        </div>
+
+        <button type="submit">Submit Performance</button>
+      </form>
+
+      <div class="qr-container">
+        <img src="image_8e5b12.png" alt="Scan to submit to ATA">
+        <p>Scan to Submit via Mobile</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <h2>Talent Gallery</h2>
+  <div class="card-profile">
+    <p style="text-align: center; margin-bottom: 20px;">
+      Meet the stars of ATA! Explore media clips, highlights, and outstanding group collaborations from creative performers across Africa and the diaspora[cite: 16, 29].
+    </p>
+    
+    <div class="gallery-grid">
+      <div class="gallery-item" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=400');">
+        <span>Music Showcase</span>
+      </div>
+      <div class="gallery-item" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?q=80&w=400');">
+        <span>Dance Arenas</span>
+      </div>
+      <div class="gallery-item" style="background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=400');">
+        <span>Creative Innovations</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="events">
+  <h2>Live Campaigns & Events</h2>
+  <div class="card-profile">
+    <div class="event-card">
+      <strong>Launch Day: Sunday, April 12th at 2PM</strong>
+      <p>The Golden Stage Showcase premiere goes live across digital hubs.</p>
+    </div>
+    <div class="event-card">
+      <strong>Daily Spotlights: 30-Day Campaign</strong>
+      <p>Constant high-octane talent posts feature top contenders across all major social networks.</p>
+    </div>
+    <p style="text-align: center; color: #ccc; font-style: italic; margin-top: 15px;">
+      Catch real-time metrics, live content distribution pools, and trending highlights natively on TikTok.
+    </p>
+  </div>
+</section>
+
+<section id="contact">
+  <h2>Connect With ATA</h2>
+  <div class="card-profile">
+    <div class="contact-details">
+      <p>Email Us: <strong><a href="mailto:africatalentarena5@gmail.com">africatalentarena5@gmail.com</a></strong></p>
+      <p style="margin-top: 10px;">WhatsApp Support: <strong><a href="tel:+254794368547">+254794368547</a></strong></p>
+    </div>
+    
+    <div class="social-cluster">
+      <a href="https://www.facebook.com/profile.php?id=61579671831607" target="_blank">Facebook</a>  
+      <a href="https://www.instagram.com/africastalentarena/" target="_blank">Instagram</a>  
+      <a href="https://www.tiktok.com/@africa_talent_arena5" target="_blank">TikTok</a>
+    </div>
+
+    <div class="hash-footer">
+      #AfricasTalentArena &nbsp;|&nbsp; #OneStageInfiniteTalents &nbsp;|&nbsp; #ImagineBig
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Africa’s Talent Arena. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

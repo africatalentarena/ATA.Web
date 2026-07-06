@@ -1,0 +1,72 @@
+{
+  "entities": {
+    "Performer": {
+      "title": "Performer",
+      "description": "A performer in the talent arena.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "country": { "type": "string" },
+        "img": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "voteCount": { "type": "number" },
+        "category": { "type": "string" }
+      },
+      "required": ["name", "country", "img", "voteCount", "category"]
+    },
+    "Vote": {
+      "title": "Vote",
+      "description": "A record of a user's vote for a performer.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "performerId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["userId", "performerId", "timestamp"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "A comment posted by a user on a performer's page.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "performerId": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["userId", "userName", "userPhoto", "performerId", "text", "timestamp"]
+    },
+    "User": {
+      "title": "User",
+      "description": "A user's profile containing their vote tally and favorites.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "totalVotes": { "type": "number" },
+        "favorites": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["email", "totalVotes", "favorites"]
+    }
+  },
+  "firestore": {
+    "/performers/{performerId}": {
+      "schema": { "$ref": "#/entities/Performer" },
+      "description": "Stores performer information and vote counts."
+    },
+    "/votes/{voteId}": {
+      "schema": { "$ref": "#/entities/Vote" },
+      "description": "Stores individual votes."
+    },
+    "/comments/{commentId}": {
+      "schema": { "$ref": "#/entities/Comment" },
+      "description": "Stores user comments on performers."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles with vote counts and favorites."
+    }
+  }
+}
