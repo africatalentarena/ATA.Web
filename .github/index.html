@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATA Production Console – Realistic Talent Management</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">ATA</div>
+      <div class="brand-copy">
+        <h1>ATA Console</h1>
+        <p>Talent operations dashboard</p>
+      </div>
+    </div>
+
+    <div class="nav-list">
+      <button class="nav-button active" data-view="dashboard-port">🎛️ Overview</button>
+      <button class="nav-button" data-view="participants-port">👥 Contestants</button>
+      <button class="nav-button" data-view="judges-port">⭐ Judges</button>
+      <button class="nav-button" data-view="upload-port">📤 Register</button>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-status">
+        <span>Status</span>
+        <span class="status-pill" id="adminStatus">Guest mode</span>
+      </div>
+      <div class="admin-actions">
+        <button class="action-primary" id="authButton">Admin sign in</button>
+        <button class="action-secondary" type="button" onclick="showToast('Use the admin panel for secure operations.')">Help</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="page">
+    <section id="dashboard-port" class="page-section active">
+      <div class="page-header">
+        <div>
+          <h2>Production overview</h2>
+          <p>Manage auditions, scoring flows, and live talent updates for Africa's Talent Arena from a single console.</p>
+        </div>
+        <div class="info-card">
+          <p style="margin:0; font-weight:700;">Latest system refresh</p>
+          <p style="margin:8px 0 0; color:var(--text-muted);">Auto-updated from the live talent roster.</p>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="metric-card">
+          <h3>Total performers</h3>
+          <p id="metric-contestants">0</p>
+        </div>
+        <div class="metric-card">
+          <h3>Active reviews</h3>
+          <p id="metric-active">0</p>
+        </div>
+        <div class="metric-card">
+          <h3>Average score</h3>
+          <p id="metric-average">0</p>
+        </div>
+        <div class="metric-card">
+          <h3>Judge votes</h3>
+          <p id="metric-votes">0</p>
+        </div>
+      </div>
+
+      <div class="section-grid">
+        <div class="panel-card">
+          <h3>Top performers</h3>
+          <ul class="top-performers" id="topPerformers"></ul>
+        </div>
+
+        <div class="panel-card">
+          <h3>Live priority queue</h3>
+          <div class="contestant-list" id="judgesQueue"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="participants-port" class="page-section">
+      <div class="page-header">
+        <div>
+          <h2>Contestant directory</h2>
+          <p>Filter, review and route contestants into judging sessions or live showcase pipelines.</p>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="filter-bar">
+          <input id="filterSearch" type="search" placeholder="Search by name or ID">
+          <select id="filterCategory">
+            <option>All categories</option>
+            <option>Music & Vocal Performance</option>
+            <option>Dance & Acrobatics</option>
+            <option>Standup Comedy</option>
+            <option>Innovation Showcase</option>
+          </select>
+          <select id="filterRegion">
+            <option>All regions</option>
+            <option>East Africa Hub</option>
+            <option>West Africa Hub</option>
+            <option>Central Africa Hub</option>
+            <option>Southern Africa Hub</option>
+            <option>North Africa Hub</option>
+          </select>
+          <select id="filterStatus">
+            <option>All statuses</option>
+            <option>Pending Review</option>
+            <option>Active</option>
+            <option>Review Complete</option>
+          </select>
+        </div>
+
+        <div class="table-panel">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Alias</th>
+                <th>Category</th>
+                <th>Region</th>
+                <th>Status</th>
+                <th>Score</th>
+                <th>Votes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="contestantsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="feedback-panel guest-guard" style="display:grid; margin-top:20px;">
+          <p><strong>Restricted access:</strong> Sign in as admin to manage contestant records and review details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="judges-port" class="page-section">
+      <div class="page-header">
+        <div>
+          <h2>Judges console</h2>
+          <p>Review performers, adjust evaluation sliders, and commit scoring for live ranking.</p>
+        </div>
+      </div>
+
+      <div class="panel-card judges-panel">
+        <div class="judge-list panel-card" style="padding:20px;">
+          <h3>Candidate selector</h3>
+          <div class="contestant-list" id="judgeContestantList"></div>
+        </div>
+
+        <div class="judges-top">
+          <div class="video-panel">
+            <iframe id="judgeVideo" src="about:blank" allowfullscreen></iframe>
+          </div>
+          <div class="score-card">
+            <h4 id="currentContestantName">Select a contestant</h4>
+            <p id="currentContestantMeta" class="score-meta">Admin login required to control the scoring panel.</p>
+            <div class="score-group">
+              <label>Creativity <span id="creativityValue">50</span></label>
+              <input id="creativityRange" type="range" min="0" max="100" value="50">
+            </div>
+            <div class="score-group">
+              <label>Technique <span id="techniqueValue">50</span></label>
+              <input id="techniqueRange" type="range" min="0" max="100" value="50">
+            </div>
+            <div class="score-group">
+              <label>Impact <span id="impactValue">50</span></label>
+              <input id="impactRange" type="range" min="0" max="100" value="50">
+            </div>
+            <p class="score-meta">Total points</p>
+            <p class="score-value" id="totalScoreValue">150</p>
+            <button class="action-primary" id="commitScores">Commit evaluation</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="feedback-panel guest-guard" style="display:grid; margin-top:20px;">
+        <p><strong>Restricted access:</strong> Sign in as admin to activate judge controls and commit scores.</p>
+      </div>
+    </section>
+
+    <section id="upload-port" class="page-section">
+      <div class="page-header">
+        <div>
+          <h2>Register new performer</h2>
+          <p>Capture a new talent submission and add it to the talent review pipeline.</p>
+        </div>
+      </div>
+
+      <div class="panel-card form-panel">
+        <form id="addPerformerForm" class="form-grid">
+          <div class="field">
+            <label for="performerName">Performer name</label>
+            <input id="performerName" name="performerName" type="text" placeholder="Star Vocalist" required>
+          </div>
+          <div class="field">
+            <label for="performerId">Contestant ID</label>
+            <input id="performerId" name="performerId" type="text" placeholder="ATA-1025" required>
+          </div>
+          <div class="field">
+            <label for="performerCategory">Category</label>
+            <select id="performerCategory" name="performerCategory">
+              <option>Music & Vocal Performance</option>
+              <option>Dance & Acrobatics</option>
+              <option>Standup Comedy</option>
+              <option>Innovation Showcase</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="performerRegion">Region</label>
+            <select id="performerRegion" name="performerRegion">
+              <option>East Africa Hub</option>
+              <option>West Africa Hub</option>
+              <option>Central Africa Hub</option>
+              <option>Southern Africa Hub</option>
+              <option>North Africa Hub</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column: span 2;">
+            <label for="performerVideo">Embedded video URL</label>
+            <input id="performerVideo" name="performerVideo" type="url" placeholder="https://www.youtube.com/embed/..." value="https://www.youtube.com/embed/dQw4w9WgXcQ">
+          </div>
+          <div class="form-actions" style="grid-column: span 2;">
+            <button class="action-primary" type="submit">Save performer</button>
+          </div>
+        </form>
+
+        <div class="feedback-panel guest-guard" style="display:grid;">
+          <p><strong>Restricted access:</strong> Admin access is required before new contestants can join the roster.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="adminModal">
+    <div class="modal-card">
+      <h3>Admin login</h3>
+      <div class="field">
+        <label for="adminEmail">Email</label>
+        <input id="adminEmail" type="email" placeholder="admin@ata.africa">
+      </div>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" type="password" placeholder="********">
+      </div>
+      <div class="modal-actions">
+        <button class="action-secondary" type="button" id="closeModal">Cancel</button>
+        <button class="action-primary" type="submit" form="loginForm">Sign in</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">
+    <strong>Notice</strong>
+    <span id="toastMessage">Action completed.</span>
+  </div>
+
+  <form id="loginForm" style="display:none;"></form>
+
+  <script src="app.js"></script>
+</body>
+</html>

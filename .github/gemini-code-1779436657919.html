@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ATA Production Console – One Stage. Infinite Talents.</title>
+  <style>
+    /* Reset & Dark Luxury Theme Variables */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+      background: #040301 linear-gradient(135deg, #040301 0%, #0f0a03 70%, #040301 100%);
+      color: #f5f5f5; 
+      line-height: 1.4;
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* LEFT SIDEBAR CONTROLLER BLOCK */
+    aside {
+      width: 260px;
+      background: rgba(8, 6, 3, 0.98);
+      border-right: 2px solid #d4af37;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; bottom: 0; left: 0;
+      z-index: 1000;
+      backdrop-filter: blur(20px);
+      transition: transform 0.3s ease;
+    }
+    .sidebar-header {
+      padding: 25px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    }
+    .sidebar-header img {
+      width: 75px;
+      height: auto;
+      filter: drop-shadow(0 0 12px rgba(212,175,55,0.4));
+      margin-bottom: 8px;
+    }
+    .sidebar-header h2 { font-size: 1rem; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
+
+    .menu-group { padding: 15px 10px; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+    .menu-btn {
+      background: transparent; border: 1px solid transparent; color: #bfa77a;
+      padding: 12px 16px; text-align: left; font-size: 0.9rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px; border-radius: 8px;
+      cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; gap: 10px;
+    }
+    .menu-btn:hover { background: rgba(212, 175, 55, 0.04); color: #fff; }
+    .menu-btn.active {
+      background: linear-gradient(90deg, #d4af37 0%, #bfa77a 100%); color: #000;
+      font-weight: 700; box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+    }
+
+    /* AUTHENTICATION STATUS INDICATOR */
+    .auth-badge-box {
+      padding: 15px;
+      border-top: 1px solid rgba(212,175,55,0.15);
+      text-align: center;
+    }
+    .auth-status-text {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block;
+    }
+    .auth-status-text.locked { color: #e74c3c; }
+    .auth-status-text.unlocked { color: #2ecc71; }
+    .auth-toggle-action {
+      background: rgba(212,175,55,0.12); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);
+      padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; text-transform: uppercase;
+      width: 100%; transition: all 0.2s;
+    }
+    .auth-toggle-action:hover { background: #d4af37; color: #000; }
+
+    /* MOBILE DOCK MENU NAVIGATION */
+    .mobile-navigation-dock {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 65px;
+      background: rgba(10, 8, 4, 0.98);
+      border-top: 1px solid rgba(212, 175, 55, 0.3);
+      backdrop-filter: blur(20px);
+      z-index: 2000;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .mobile-nav-item {
+      background: transparent; border: none; color: #a6967a;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: bold; text-transform: uppercase; gap: 4px; cursor: pointer;
+    }
+    .mobile-nav-item.active { color: #d4af37; font-weight: 800; }
+    .mobile-nav-item span.icon { font-size: 1.2rem; }
+
+    /* RIGHT WORKSPACE PANELS CONTAINER */
+    .app-workspace {
+      margin-left: 260px;
+      flex-grow: 1;
+      width: calc(100% - 260px);
+      transition: all 0.3s ease;
+    }
+
+    /* HERO SLIDESHOW COMPONENT */
+    .hero-banner {
+      position: relative; width: 100%; height: 200px;
+      display: flex; align-items: center; padding: 0 40px;
+      overflow: hidden; border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+    }
+    .slideshow-wall { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    .wallpaper-slide {
+      position: absolute; width: 100%; height: 100%;
+      background-size: cover; background-position: center; opacity: 0;
+      animation: wallpaperLoop 24s infinite ease-in-out;
+    }
+    .wallpaper-slide:nth-child(1) { background-image: url('/attachments/ATA%20platform.jpg'); animation-delay: 0s; }
+    .wallpaper-slide:nth-child(2) { background-image: url('/attachments/ChatGPT%20Image%20Mar%2024%2C%202026%2C%2011_18_51%20AM.png'); animation-delay: 6s; }
+    .wallpaper-slide:nth-child(3) { background-image: url('/attachments/Copilot_20260324_163932.png'); animation-delay: 12s; }
+    .wallpaper-slide:nth-child(4) { background-image: url('/attachments/Copilot_20260324_170153.png'); animation-delay: 18s; }
+
+    .banner-tint {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(90deg, rgba(4, 3, 1, 0.98) 15%, rgba(4, 3, 1, 0.6) 70%, rgba(4, 3, 1, 0.95) 100%);
+      z-index: 2;
+    }
+    .banner-text-holder { position: relative; z-index: 3; }
+    .banner-text-holder h1 { font-size: 1.7rem; text-transform: uppercase; font-weight: 900; letter-spacing: 1px; }
+    .banner-text-holder p { color: #d4af37; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
+
+    /* LAYOUT PORTS ROUTING VIEWPORTS */
+    main { padding: 30px; padding-bottom: 80px; }
+    .view-view { display: none; }
+    .view-view.active-port { display: block; animation: viewSlideIn 0.25s ease-out; }
+
+    /* LOCK SCREEN ACCESSIBILITY WALL */
+    .gate-lock-curtain {
+      text-align: center; padding: 60px 20px;
+      background: rgba(15, 12, 8, 0.7); border: 2px dashed rgba(231, 76, 60, 0.3); border-radius: 12px;
+    }
+    .gate-lock-curtain h3 { color: #e74c3c; text-transform: uppercase; font-size: 1.4rem; margin-bottom: 10px; }
+    .gate-lock-curtain p { color: #aaa; font-size: 0.9rem; margin-bottom: 20px; }
+
+    /* MODAL POPUP SYSTEM OVERLAYS */
+    .security-modal-backdrop {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+      z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .security-modal-card {
+      background: #0f0c08; border: 2px solid #d4af37; border-radius: 12px;
+      width: 100%; max-width: 400px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+    }
+    .security-modal-card h3 { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; color: #fff; text-align: center; }
+    .security-modal-card .form-element { display: flex; flex-direction: column; gap: 6px; margin-bottom: 15px; }
+    .security-modal-card .form-element label { font-size: 0.75rem; text-transform: uppercase; color: #d4af37; font-weight: bold; }
+    .security-modal-card .form-element input { background: #1a150e; border: 1px solid rgba(212,175,55,0.3); padding: 12px; border-radius: 6px; color: #fff; font-size: 1rem; }
+    .modal-actions-row { display: flex; gap: 10px; margin-top: 20px; }
+    .modal-btn { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 0.85rem; }
+    .modal-btn.confirm { background: linear-gradient(180deg, #f7d35a 0%, #d4af37 100%); color: #000; }
+    .modal-btn.cancel { background: rgba(255,255,255,0.06); color: #aaa; }
+
+    /* CARDS & METRICS PANELS */
+    .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .metric-box { background: rgba(20, 16, 10, 0.4); border: 1px solid rgba(212, 175, 55, 0.15); border-radius: 10px; padding: 18px; text-align: center; }
+    .metric-box h4 { color: #8c826e; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
+    .metric-val { color: #d4af37; font-size: 1.6rem; font-weight: 800; }
+
+    .glass-panel { background: rgba(15, 12, 8, 0.5); border: 1px solid rgba(212, 175, 55, 0.12); border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+    .glass-panel h3 { font-size: 1.2rem; color: #fff; margin-bottom: 18px; text-transform: uppercase; border-left: 4px solid #d4af37; padding-left: 10px; }
+
+    /* ROOM LAYOUT SPLIT GRID */
+    .console-split-grid { display: grid; grid-template-columns: 1.50fr 1fr; gap: 25px; }
+    
+    /* CONTESTANT SELECTOR CHIPS TRACK */
+    .contestant-selector-bar { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 15px; }
+    .contestant-chip {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.15);
+      padding: 8px 14px; border-radius: 20px; color: #aaa; font-size: 0.82rem; font-weight: bold;
+      white-space: nowrap; cursor: pointer; transition: all 0.2s;
+    }
+    .contestant-chip:hover { border-color: #d4af37; color: #fff; }
+    .contestant-chip.active-chip { background: rgba(212,175,55,0.12); border-color: #d4af37; color: #d4af37; }
+
+    /* PERFORMANCE METRICS EVALUATOR SLIDERS */
+    .scoring-slider-container { display: flex; flex-direction: column; gap: 14px; margin-top: 15px; }
+    .slider-card { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 14px; }
+    .slider-meta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .slider-meta-row label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: #e5c158; }
+    .slider-numeric-badge { background: rgba(212, 175, 55, 0.12); color: #d4af37; padding: 2px 8px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; border: 1px solid rgba(212, 175, 55, 0.25); }
+    .premium-input-range { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 5px; outline: none; -webkit-appearance: none; accent-color: #d4af37; }
+
+    /* AUTOMATED GAUGES */
+    .gauge-display-container {
+      background: radial-gradient(circle at center, rgba(25,20,10,0.4) 0%, rgba(8,6,3,0.85) 100%);
+      border: 2px dashed rgba(212, 175, 55, 0.25); border-radius: 12px; padding: 30px 20px; text-align: center;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
+    .gauge-score-value { font-size: 4rem; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+    .gauge-total-denominator { font-size: 0.8rem; color: #8c826e; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+    
+    .action-submit-score {
+      width: 100%; background: linear-gradient(180deg, #f7d35a 0%, #d4af37 100%); color: #000;
+      border: none; padding: 12px; border-radius: 6px; font-weight: 800; font-size: 0.9rem; text-transform: uppercase;
+      cursor: pointer; margin-top: 15px; transition: transform 0.1s;
+    }
+    .action-submit-score:active { transform: scale(0.98); }
+
+    /* ACTION UTILITIES BUTTONS */
+    .action-btn-danger {
+      background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.4);
+      padding: 4px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.7rem;
+    }
+    .action-btn-danger:hover { background: #e74c3c; color: #fff; }
+
+    /* DATA INTERFACING TABLES */
+    .table-container { overflow-x: auto; width: 100%; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: rgba(212, 175, 55, 0.06); color: #d4af37; padding: 12px; font-size: 0.8rem; text-transform: uppercase; border-bottom: 2px solid rgba(212,175,55,0.2); }
+    td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem; }
+    .status-lbl { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+    .status-lbl.pass { background: rgba(46, 204, 113, 0.12); color: #2ecc71; border: 1px solid rgba(46,204,113,0.25); }
+
+    /* INTAKE FORM PIPELINE PANELS */
+    .secure-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .control-cell { display: flex; flex-direction: column; gap: 4px; }
+    .control-cell.full-width { grid-column: span 2; }
+    .control-cell label { color: #d4af37; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+    .control-cell input, .control-cell select { background: rgba(20, 16, 10, 0.5); border: 1px solid rgba(212, 175, 55, 0.2); padding: 10px; border-radius: 6px; color: #fff; font-size: 0.9rem; }
+    .upload-btn { grid-column: span 2; background: #d4af37; color: #000; border: none; padding: 12px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; cursor: pointer; }
+
+    /* FLOW ROADMAP MAP NODES */
+    .flow-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; }
+    .flow-node { background: rgba(255,255,255,0.01); border: 1px solid rgba(212,175,55,0.06); border-radius: 6px; padding: 12px; text-align: center; }
+    .flow-node .badge { background: #d4af37; color: #000; font-weight: bold; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; font-size: 0.8rem; }
+    .flow-node p { font-size: 0.8rem; color: #bbb; }
+    .flow-node strong { display: block; font-size: 0.85rem; color: #fff; margin-bottom: 2px; }
+
+    /* DEVICE BREAKPOINT MEDIA QUERIES */
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      aside { transform: translateX(-100%); width: 0; pointer-events: none; }
+      .app-workspace { margin-left: 0; width: 100%; }
+      .mobile-navigation-dock { display: grid; }
+      main { padding: 16px; padding-bottom: 90px; }
+      .hero-banner { height: 140px; padding: 0 20px; }
+      .hero-banner h1 { font-size: 1.3rem; }
+      .console-split-grid { grid-template-columns: 1fr; gap: 20px; }
+      .secure-form { grid-template-columns: 1fr; }
+      .control-cell.full-width { grid-column: span 1; }
+      .upload-btn { grid-column: span 1; }
+    }
+
+    @keyframes wallpaperLoop {
+      0% { opacity: 0; transform: scale(1); }
+      6% { opacity: 0.35; }
+      25% { opacity: 0.35; }
+      31% { opacity: 0; transform: scale(1.03); }
+      100% { opacity: 0; }
+    }
+    @keyframes viewSlideIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <div class="security-modal-backdrop" id="authModal">
+    <div class="security-modal-card">
+      <h3>Admin Verification</h3>
+      <div class="form-element">
+        <label for="authEmail">Official Portal Email</label>
+        <input type="email" id="authEmail" placeholder="example@domain.com">
+      </div>
+      <div class="form-element">
+        <label for="authPassword">Official Password</label>
+        <input type="password" id="authPassword" placeholder="••••••••">
+      </div>
+      <div class="modal-actions-row">
+        <button class="modal-btn cancel" onclick="closeAuthModal()">Cancel</button>
+        <button class="modal-btn confirm" onclick="verifyAdminCredentials()">Verify Credentials</button>
+      </div>
+    </div>
+  </div>
+
+  <aside id="desktop-sidebar">
+    <div class="sidebar-header">
+      <img src="/attachments/So2EEBiWNY2ERHTwKMhiR.jpeg" alt="ATA Crest Logo">
+      <h2>ATA Console</h2>
+    </div>
+    <div class="menu-group">
+      <button class="menu-btn active" onclick="syncViewRouting(this, 'dashboard-port')">🎛️ Overview</button>
+      <button class="menu-btn" onclick="syncViewRouting(this, 'participants-port')">👥 Contestants</button>
+      <button class="menu-btn" onclick="syncViewRouting(this, 'judges-port')">⭐ Judges Console</button>
+      <button class="menu-btn" onclick="uploadTabRouteGuard(this)">📤 Add Performer</button>
+    </div>
+    
+    <div class="auth-badge-box">
+      <span class="auth-status-text locked" id="statusTextDesk">🔒 Mode: Public Guest</span>
+      <button class="auth-toggle-action" id="authBtnDesk" onclick="handleAuthTrigger()">Admin Sign In</button>
+    </div>
+  </aside>
+
+  <div class="mobile-navigation-dock">
+    <button class="mobile-nav-item active" onclick="syncViewRouting(this, 'dashboard-port')"><span class="icon">🎛️</span>Overview</button>
+    <button class="mobile-nav-item" onclick="syncViewRouting(this, 'participants-port')"><span class="icon">👥</span>Contestants</button>
+    <button class="mobile-nav-item" onclick="syncViewRouting(this, 'judges-port')"><span class="icon">⭐</span>Scoring</button>
+    <button class="mobile-nav-item" onclick="uploadTabRouteGuard(this)"><span class="icon">📤</span>Add</button>
+  </div>
+
+  <div class="app-workspace">
+    
+    <div class="hero-banner">
+      <div class="slideshow-wall">
+        <div class="wallpaper-slide"></div>
+        <div class="wallpaper-slide"></div>
+        <div class="wallpaper-slide"></div>
+        <div class="wallpaper-slide"></div>
+      </div>
+      <div class="banner-tint"></div>
+      <div class="banner-text-holder">
+        <h1>One Stage. Infinite Talents.</h1>
+        <p>Africa's Talent Arena Portal</p>
+      </div>
+    </div>
+
+    <main>
+      
+      <div id="dashboard-port" class="view-view active-port">
+        <div class="metrics-row">
+          <div class="metric-box"><h4>Active Registrations</h4><div class="metric-val" id="metric-reg-count">3</div></div>
+          <div class="metric-box"><h4>Auditions Stored</h4><div class="metric-val">854</div></div>
+          <div class="metric-box"><h4>Verified Status</h4><div class="metric-val">620</div></div>
+          <div class="metric-box"><h4>Global Score Votes</h4><div class="metric-val">45,912</div></div>
+        </div>
+
+        <div class="glass-panel">
+          <h3>Show Concept & Structure</h3>
+          <p style="color: #bbb; margin-bottom: 15px; font-size: 0.9rem;">
+            Africa's Talent Arena (ATA) is a premier continental talent competition designed to discover and celebrate extraordinary performers from across Africa and the diaspora.
+          </p>
+          <div class="flow-steps">
+            <div class="flow-node"><div class="badge">1</div><strong>Online Auditions</strong><p>Video submissions through the digital workspace pipeline.</p></div>
+            <div class="flow-node"><div class="badge">2</div><strong>Regional Pools</strong><p>Audition pools sorted across regional hubs.</p></div>
+            <div class="flow-node"><div class="badge">3</div><strong>Judges Review</strong><p>Panel scoring evaluation matrix for Semifinals allocation.</p></div>
+            <div class="flow-node"><div class="badge">4</div><strong>Live Showcase</strong><p>Broadcast showcases activation with audience voting.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="participants-port" class="view-view">
+        <div class="gate-lock-curtain" id="lock-screen-participants" style="display: block;">
+          <h3>Administrative Access Required</h3>
+          <p>You must authenticate using the official administration credentials to view or manage the live contestant records directory.</p>
+          <button class="action-submit-score" style="width: auto; padding: 12px 30px;" onclick="openAuthModal()">Authorize Console Access</button>
+        </div>
+
+        <div class="glass-panel" id="content-screen-participants" style="display: none;">
+          <h3>Registered Auditions Database Tracker</h3>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Contestant ID</th>
+                  <th>Stage Alias</th>
+                  <th>Category Group</th>
+                  <th>Region Hub</th>
+                  <th>Operational Control</th>
+                </tr>
+              </thead>
+              <tbody id="database-table-body">
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="judges-port" class="view-view">
+        <div class="gate-lock-curtain" id="lock-screen-judges" style="display: block;">
+          <h3>Judges System Vault Closed</h3>
+          <p>Modifying scoring sliders, reviewing live feeds, or calculating totals requires official admin clearance.</p>
+          <button class="action-submit-score" style="width: auto; padding: 12px 30px;" onclick="openAuthModal()">Authorize Console Access</button>
+        </div>
+
+        <div class="glass-panel" id="content-screen-judges" style="display: none;">
+          <h3>Live Broadcast Evaluation Console</h3>
+          
+          <div class="contestant-selector-bar" id="selector-chips-box">
+            </div>
+          
+          <div class="console-split-grid">
+            <div>
+              <div style="position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; border: 1px solid rgba(212,175,55,0.2);">
+                <iframe id="live-video-streamer" src="" title="ATA Live Stream Output Node" allowfullscreen></iframe>
+              </div>
+              
+              <div class="scoring-slider-container">
+                <div class="slider-card">
+                  <div class="slider-meta-row"><label for="slide-creativity">Creativity & Originality</label><span id="val-creativity" class="slider-numeric-badge">50</span></div>
+                  <input type="range" id="slide-creativity" class="premium-input-range" min="0" max="100" value="50" oninput="runLiveScoreCalculation()">
+                </div>
+                <div class="slider-card">
+                  <div class="slider-meta-row"><label for="slide-skill">Skill & Execution</label><span id="val-skill" class="slider-numeric-badge">50</span></div>
+                  <input type="range" id="slide-skill" class="premium-input-range" min="0" max="100" value="50" oninput="runLiveScoreCalculation()">
+                </div>
+                <div class="slider-card">
+                  <div class="slider-meta-row"><label for="slide-presence">Stage Presence & Impact</label><span id="val-presence" class="slider-numeric-badge">50</span></div>
+                  <input type="range" id="slide-presence" class="premium-input-range" min="0" max="100" value="50" oninput="runLiveScoreCalculation()">
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="gauge-display-container">
+                <div id="live-gauge-total" class="gauge-score-value">150</div>
+                <div class="gauge-total-denominator">Cumulative System Points</div>
+                
+                <div style="margin-top: 20px; width: 100%; border-top: 1px solid rgba(212, 175, 55, 0.15); padding-top: 15px; text-align: left;">
+                  <span style="font-size: 0.7rem; text-transform: uppercase; color: #8c826e; display: block; font-weight: bold; margin-bottom: 2px;">Active Auditing File</span>
+                  <strong id="active-candidate-title" style="color: #fff; font-size: 1rem; display: block;">---</strong>
+                  <span id="active-candidate-pool" style="font-size: 0.8rem; color: #d4af37;">---</span>
+                </div>
+
+                <button class="action-submit-score" onclick="commitCurrentEvaluation()">Commit Evaluation Score</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="upload-port" class="view-view">
+        <div class="gate-lock-curtain" id="lock-screen-upload" style="display: block;">
+          <h3>Performance Insertion Engine Locked</h3>
+          <p>Only verified platform administrators have authorization to register new candidates manually into the production matrix pools.</p>
+          <button class="action-submit-score" style="width: auto; padding: 12px 30px;" onclick="openAuthModal()">Authorize Console Access</button>
+        </div>
+
+        <div class="glass-panel" id="content-screen-upload" style="display: none;">
+          <h3>Register Performance Audition File</h3>
+          <form class="secure-form" id="performerAddForm" onsubmit="handleNewPerformerRegistry(event)">
+            <div class="control-cell">
+              <label for="f-name">Stage / Performance Alias Name:</label>
+              <input type="text" id="f-name" placeholder="e.g. Star Vocalist" required>
+            </div>
+            <div class="control-cell">
+              <label for="f-id">Unique Registry ID Suffix:</label>
+              <input type="text" id="f-id" placeholder="e.g. 501" required>
+            </div>
+            <div class="control-cell">
+              <label for="f-category">Talent Skill Category Field:</label>
+              <select id="f-category">
+                <option>Singing / Music</option>
+                <option>Dance / Acrobatics</option>
+                <option>Standup Comedy</option>
+                <option>Tech Innovation Showcase / Fashion</option>
+              </select>
+            </div>
+            <div class="control-cell">
+              <label for="f-region">Regional Hub Assignment Group:</label>
+              <select id="f-region">
+                <option>East Africa Pool</option>
+                <option>West Africa Pool</option>
+                <option>Central Africa Pool</option>
+                <option>Southern Africa Pool</option>
+                <option>North Africa Pool</option>
+              </select>
+            </div>
+            <div class="control-cell full-width">
+              <label for="f-video">YouTube Embedded Stream URL Link:</label>
+              <input type="url" id="f-video" placeholder="https://www.youtube.com/embed/dQw4w9WgXcQ" value="https://www.youtube.com/embed/dQw4w9WgXcQ" required>
+            </div>
+            
+            <button type="submit" class="upload-btn" style="margin-top: 10px;">Commit Entry Registration</button>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // CREDENTIAL MATRIX ROUTE GUARD PROTECTION
+    const SUPER_EMAIL = "africatalentarena5@gmail.com";
+    const SUPER_PASS = "Xammuzzyy@1136";
+
+    // CORE STATE ENGINES
+    let isUserAuthenticatedAdmin = false;
+    let currentSelectedActiveIndex = 0;
+
+    const ataContestantsDataset = [
+      { id: "ATA-26-091", alias: "Amani Vocalist", track: "Singing / Music", hub: "East Africa Pool", video: "https://www.youtube.com/embed/dQw4w9WgXcQ", c: 85, s: 78, p: 90 },
+      { id: "ATA-26-114", alias: "The Flex Crew", track: "Dance / Acrobatics", hub: "West Africa Pool", video: "https://www.youtube.com/embed/2_g9S9-t-sA", c: 92, s: 95, p: 88 },
+      { id: "ATA-26-340", alias: "Kansiime Humor", track: "Standup Comedy", hub: "Central Africa Pool", video: "https://www.youtube.com/embed/V6_W8_oX45A", c: 74, s: 80, p: 85 }
+    ];
+
+    // MODAL WINDOW INTERACTION CONTEXTS
+    function openAuthModal() {
+      document.getElementById('authModal').style.display = 'flex';
+      document.getElementById('authEmail').focus();
+    }
+    
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+      document.getElementById('authEmail').value = "";
+      document.getElementById('authPassword').value = "";
+    }
+
+    function handleAuthTrigger() {
+      if (isUserAuthenticatedAdmin) {
+        isUserAuthenticatedAdmin = false;
+        applySecurityInterfaceStates();
+        alert("Administrative session closed. System has rolled back to Public Guest Mode.");
+      } else {
+        openAuthModal();
+      }
+    }
+
+    // AUTHENTICATION GUARD VALIDATION CONTROLLER
+    function verifyAdminCredentials() {
+      const emailInput = document.getElementById('authEmail').value.trim();
+      const passInput = document.getElementById('authPassword').value;
+
+      if (emailInput === SUPER_EMAIL && passInput === SUPER_PASS) {
+        isUserAuthenticatedAdmin = true;
+        closeAuthModal();
+        applySecurityInterfaceStates();
+        alert("Verification Success! Security clearance level 'ADMIN_ROOT' verified successfully.");
+      } else {
+        alert("Security Violation: Invalid administrative credentials mismatch logged.");
+      }
+    }
+
+    // COMPREHENSIVE VIEWPORT RERENDER ENGINE GUARDS
+    function applySecurityInterfaceStates() {
+      const statusText = document.getElementById('statusTextDesk');
+      const authBtn = document.getElementById('authBtnDesk');
+      
+      const lockParts = document.getElementById('lock-screen-participants');
+      const contentParts = document.getElementById('content-screen-participants');
+      
+      const lockJudges = document.getElementById('lock-screen-judges');
+      const contentJudges = document.getElementById('content-screen-judges');
+      
+      const lockUpload = document.getElementById('lock-screen-upload');
+      const contentUpload = document.getElementById('content-screen-upload');
+
+      if (isUserAuthenticatedAdmin) {
+        statusText.innerText = "🔓 Mode: Admin Session";
+        statusText.className = "auth-status-text unlocked";
+        authBtn.innerText = "Admin Logout";
+
+        lockParts.style.display = 'none'; contentParts.style.display = 'block';
+        lockJudges.style.display = 'none'; contentJudges.style.display = 'block';
+        lockUpload.style.display = 'none'; contentUpload.style.display = 'block';
+        
+        setupPlatformContestantsEngine();
+      } else {
+        statusText.innerText = "🔒 Mode: Public Guest";
+        statusText.className = "auth-status-text locked";
+        authBtn.innerText = "Admin Sign In";
+
+        lockParts.style.display = 'block'; contentParts.style.display = 'none';
+        lockJudges.style.display = 'block'; contentJudges.style.display = 'none';
+        lockUpload.style.display = 'block'; contentUpload.style.display = 'none';
+      }
+    }
+
+    // DYNAMIC DATA INJECTION PROCESSORS
+    function setupPlatformContestantsEngine() {
+      if (!isUserAuthenticatedAdmin) return;
+
+      const tableBody = document.getElementById('database-table-body');
+      const chipsBox = document.getElementById('selector-chips-box');
+      
+      tableBody.innerHTML = "";
+      chipsBox.innerHTML = "";
+      
+      document.getElementById('metric-reg-count').innerText = ataContestantsDataset.length;
+
+      ataContestantsDataset.forEach((item, idx) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>#${item.id}</td>
+          <td><strong>${item.alias}</strong></td>
+          <td>${item.track}</td>
+          <td>${item.hub}</td>
+          <td><button class="action-btn-danger" onclick="removePerformerRecord(${idx})">Remove</button></td>
+        `;
+        tableBody.appendChild(row);
+
+        const chip = document.createElement('div');
+        chip.className = `contestant-chip ${idx === currentSelectedActiveIndex ? 'active-chip' : ''}`;
+        chip.innerText = `#${item.id} ${item.alias}`;
+        chip.onclick = () => {
+          currentSelectedActiveIndex = idx;
+          setupPlatformContestantsEngine();
+        };
+        chipsBox.appendChild(chip);
+      });
+
+      if (ataContestantsDataset.length > 0) {
+        if (currentSelectedActiveIndex >= ataContestantsDataset.length) {
+          currentSelectedActiveIndex = ataContestantsDataset.length - 1;
+        }
+        const currentTargetData = ataContestantsDataset[currentSelectedActiveIndex];
+        document.getElementById('live-video-streamer').src = currentTargetData.video;
+        document.getElementById('active-candidate-title').innerText = `#${currentTargetData.id} ${currentTargetData.alias}`;
+        document.getElementById('active-candidate-pool').innerText = `Category: ${currentTargetData.track} | ${currentTargetData.hub}`;
+
+        document.getElementById('slide-creativity').value = currentTargetData.c;
+        document.getElementById('slide-skill').value = currentTargetData.s;
+        document.getElementById('slide-presence').value = currentTargetData.p;
+        runLiveScoreCalculation();
+      } else {
+        document.getElementById('live-video-streamer').src = "";
+        document.getElementById('active-candidate-title').innerText = "No Records Active";
+        document.getElementById('active-candidate-pool').innerText = "Add contestants to begin tracking.";
+        document.getElementById('live-gauge-total').innerText = "0";
+      }
+    }
+
+    // DATA MUTATION OPERATIONS (Restricted Under Strict Conditional Security Guards)
+    function handleNewPerformerRegistry(event) {
+      event.preventDefault();
+      if (!isUserAuthenticatedAdmin) {
+        alert("Operation Denied: Unauthorized configuration alteration vector blocked.");
+        return;
+      }
+
+      const nameVal = document.getElementById('f-name').value.trim();
+      const idVal = document.getElementById('f-id').value.trim().toUpperCase();
+      const trackVal = document.getElementById('f-category').value;
+      const hubVal = document.getElementById('f-region').value;
+      const videoVal = document.getElementById('f-video').value.trim();
+
+      const payload = {
+        id: "ATA-26-" + idVal,
+        alias: nameVal,
+        track: trackVal,
+        hub: hubVal,
+        video: videoVal,
+        c: 50, s: 50, p: 50
+      };
+
+      ataContestantsDataset.push(payload);
+      document.getElementById('performerAddForm').reset();
+      setupPlatformContestantsEngine();
+      alert(`Entry Locked: Candidate ${payload.alias} successfully registered into active database matrix under ID: ${payload.id}`);
+    }
+
+    function removePerformerRecord(targetIndex) {
+      if (!isUserAuthenticatedAdmin) {
+        alert("Operation Denied: Unauthorized structural mutation request blocked.");
+        return;
+      }
+      
+      const targetName = ataContestantsDataset[targetIndex].alias;
+      if (confirm(`Are you certain you want to permanently delete candidate file: '${targetName}' from the active framework?`)) {
+        ataContestantsDataset.splice(targetIndex, 1);
+        setupPlatformContestantsEngine();
+      }
+    }
+
+    function runLiveScoreCalculation() {
+      if (!isUserAuthenticatedAdmin || ataContestantsDataset.length === 0) return;
+
+      const cVal = parseInt(document.getElementById('slide-creativity').value);
+      const sVal = parseInt(document.getElementById('slide-skill').value);
+      const pVal = parseInt(document.getElementById('slide-presence').value);
+      
+      document.getElementById('val-creativity').innerText = cVal;
+      document.getElementById('val-skill').innerText = sVal;
+      document.getElementById('val-presence').innerText = pVal;
+      
+      const totalScoreSum = cVal + sVal + pVal;
+      document.getElementById('live-gauge-total').innerText = totalScoreSum;
+
+      ataContestantsDataset[currentSelectedActiveIndex].c = cVal;
+      ataContestantsDataset[currentSelectedActiveIndex].s = sVal;
+      ataContestantsDataset[currentSelectedActiveIndex].p = pVal;
+    }
+
+    function commitCurrentEvaluation() {
+      if (!isUserAuthenticatedAdmin) return;
+      const activeData = ataContestantsDataset[currentSelectedActiveIndex];
+      const totalCombinedPoints = activeData.c + activeData.s + activeData.p;
+      alert(`System Security Notice:\n\nEvaluation locked and submitted for Candidate File #${activeData.id} [${activeData.alias}]. Total consensus matrix rating recorded: ${totalCombinedPoints} / 300 Points!`);
+    }
+
+    // MULTI-VIEWPORT APPS NAVIGATION SYSTEM
+    function syncViewRouting(clickedMenuElement, targetedPortId) {
+      const allViews = document.querySelectorAll('.view-view');
+      allViews.forEach(view => view.classList.remove('active-port'));
+      
+      const allMenuBtns = document.querySelectorAll('.menu-btn, .mobile-nav-item');
+      allMenuBtns.forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(targetedPortId).classList.add('active-port');
+      
+      const textIdentifier = clickedMenuElement.textContent.replace(/[\u001b\u0020\u200b\u2100-\u26FF🎛️👥⭐📤]/g, '').trim().toLowerCase();
+      allMenuBtns.forEach(btn => {
+        const btnText = btn.textContent.replace(/[\u001b\u0020\u200b\u2100-\u26FF🎛️👥⭐📤]/g, '').trim().toLowerCase();
+        if(btnText === textIdentifier) btn.classList.add('active');
+      });
+    }
+
+    function uploadTabRouteGuard(element) {
+      syncViewRouting(element, 'upload-port');
+    }
+    
+    window.onload = function() {
+      applySecurityInterfaceStates();
+    };
+  </script>
+</body>
+</html>
