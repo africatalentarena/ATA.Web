@@ -1,0 +1,239 @@
+﻿<!-- Africa's Got Talent - Full Africa-wide Dynamic Voting Page -->
+<div class="agt-website">
+  <!-- Hero Section -->
+  <section class="hero">
+    <video autoplay muted loop class="hero-video">
+      <source src="https://www.example.com/hero-video.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay">
+      <h1>Africa’s brightest talents. One stage. Endless inspiration.</h1>
+      <div class="hero-buttons">
+        <a href="#performances" class="btn watch">Watch Now</a>
+        <a href="#vote" class="btn vote">Vote Today</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Performers -->
+  <section class="performers" id="performances">
+    <h2>Featured Performers</h2>
+    <div class="performer-cards" id="performer-cards"></div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <h3>1. Discover</h3>
+        <p>Watch amazing talents from all over Africa.</p>
+      </div>
+      <div class="step">
+        <h3>2. Vote</h3>
+        <p>Support your favorites every week.</p>
+      </div>
+      <div class="step">
+        <h3>3. Celebrate</h3>
+        <p>See them shine on stage!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Voting Section -->
+  <section class="vote-section" id="vote">
+    <h2>Vote for Your Favorite Performer!</h2>
+    <div class="vote-cards" id="vote-cards"></div>
+  </section>
+
+  <!-- Leaderboard Section -->
+  <section class="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard-list"></ul>
+  </section>
+
+  <!-- Toast Notification -->
+  <div id="toast"></div>
+
+  <!-- CTA Banner -->
+  <section class="cta">
+    <h2>Join the Movement. Celebrate African Talent!</h2>
+    <a href="#vote" class="btn vote">Vote Now</a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 Africa’s Got Talent. Follow us:</p>
+    <div class="social">
+      <a href="https://instagram.com" target="_blank">Instagram</a> |
+      <a href="https://tiktok.com" target="_blank">TikTok</a> |
+      <a href="https://youtube.com" target="_blank">YouTube</a>
+    </div>
+  </footer>
+</div>
+
+<style>
+/* General Styles */
+.agt-website { font-family: Arial, sans-serif; color: #fff; background: #000; }
+h1,h2,h3 { color: gold; text-align:center; margin:0; padding:10px 0; }
+
+/* Hero Section */
+.hero { position: relative; height: 80vh; overflow: hidden; display:flex; align-items:center; justify-content:center; }
+.hero-video { width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1; }
+.hero-overlay { position: relative; z-index:2; text-align:center; padding:20px; }
+.hero-buttons { margin-top:20px; }
+.btn { padding:12px 25px; margin:5px; text-decoration:none; font-weight:bold; border-radius:5px; }
+.btn.watch { background:red; color:#fff; }
+.btn.vote { background:gold; color:#000; }
+
+/* Cards */
+.performers, .vote-section { padding:50px 20px; }
+.performer-cards, .vote-cards { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; margin-top:30px; }
+.card, .vote-card { width:250px; text-align:center; border:2px solid gold; border-radius:10px; padding:20px; background:#000; }
+.card img, .vote-card img { width:100%; height:auto; border-radius:5px; margin-bottom:10px; }
+.vote-card button { background:red; color:#fff; padding:10px 20px; border:none; border-radius:5px; cursor:pointer; margin-bottom:10px; }
+.vote-card span { color: gold; font-weight:bold; }
+
+/* Leaderboard */
+.leaderboard { padding:50px 20px; background:#222; text-align:center; }
+#leaderboard-list { list-style:none; padding:0; }
+#leaderboard-list li { background:#000; border:2px solid gold; border-radius:10px; margin:10px auto; padding:15px; width:250px; }
+
+/* Toast */
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: gold; color: #000; padding: 15px 25px; border-radius: 5px; display:none; font-weight:bold; }
+
+/* CTA Banner */
+.cta { padding:50px 20px; background:red; color:#fff; text-align:center; }
+.cta .btn.vote { background: gold; color:#000; }
+
+/* Footer */
+.footer { padding:20px; background:#111; text-align:center; font-size:14px; }
+.footer .social a { color: gold; text-decoration:none; margin:0 5px; }
+
+/* Responsive */
+@media(max-width:768px){ 
+  .performer-cards, .vote-cards, .steps { flex-direction:column; align-items:center; }
+}
+@media(max-width:480px){
+  .card, .vote-card, #leaderboard-list li { width:90%; }
+  .hero h1 { font-size:1.5rem; }
+}
+</style>
+
+<script>
+const performers = [
+{"id":"p1","name":"Performer 1","country":"Algeria","img":"https://www.example.com/performer1.jpg"},
+{"id":"p2","name":"Performer 2","country":"Angola","img":"https://www.example.com/performer2.jpg"},
+{"id":"p3","name":"Performer 3","country":"Benin","img":"https://www.example.com/performer3.jpg"},
+{"id":"p4","name":"Performer 4","country":"Botswana","img":"https://www.example.com/performer4.jpg"},
+{"id":"p5","name":"Performer 5","country":"Burkina Faso","img":"https://www.example.com/performer5.jpg"},
+{"id":"p6","name":"Performer 6","country":"Burundi","img":"https://www.example.com/performer6.jpg"},
+{"id":"p7","name":"Performer 7","country":"Cabo Verde","img":"https://www.example.com/performer7.jpg"},
+{"id":"p8","name":"Performer 8","country":"Cameroon","img":"https://www.example.com/performer8.jpg"},
+{"id":"p9","name":"Performer 9","country":"Central African Republic","img":"https://www.example.com/performer9.jpg"},
+{"id":"p10","name":"Performer 10","country":"Chad","img":"https://www.example.com/performer10.jpg"},
+{"id":"p11","name":"Performer 11","country":"Comoros","img":"https://www.example.com/performer11.jpg"},
+{"id":"p12","name":"Performer 12","country":"Congo (Congo-Brazzaville)","img":"https://www.example.com/performer12.jpg"},
+{"id":"p13","name":"Performer 13","country":"Democratic Republic of the Congo","img":"https://www.example.com/performer13.jpg"},
+{"id":"p14","name":"Performer 14","country":"Djibouti","img":"https://www.example.com/performer14.jpg"},
+{"id":"p15","name":"Performer 15","country":"Egypt","img":"https://www.example.com/performer15.jpg"},
+{"id":"p16","name":"Performer 16","country":"Equatorial Guinea","img":"https://www.example.com/performer16.jpg"},
+{"id":"p17","name":"Performer 17","country":"Eritrea","img":"https://www.example.com/performer17.jpg"},
+{"id":"p18","name":"Performer 18","country":"Eswatini","img":"https://www.example.com/performer18.jpg"},
+{"id":"p19","name":"Performer 19","country":"Ethiopia","img":"https://www.example.com/performer19.jpg"},
+{"id":"p20","name":"Performer 20","country":"Gabon","img":"https://www.example.com/performer20.jpg"},
+{"id":"p21","name":"Performer 21","country":"Gambia","img":"https://www.example.com/performer21.jpg"},
+{"id":"p22","name":"Performer 22","country":"Ghana","img":"https://www.example.com/performer22.jpg"},
+{"id":"p23","name":"Performer 23","country":"Guinea","img":"https://www.example.com/performer23.jpg"},
+{"id":"p24","name":"Performer 24","country":"Guinea-Bissau","img":"https://www.example.com/performer24.jpg"},
+{"id":"p25","name":"Performer 25","country":"Ivory Coast","img":"https://www.example.com/performer25.jpg"},
+{"id":"p26","name":"Performer 26","country":"Kenya","img":"https://www.example.com/performer26.jpg"},
+{"id":"p27","name":"Performer 27","country":"Lesotho","img":"https://www.example.com/performer27.jpg"},
+{"id":"p28","name":"Performer 28","country":"Liberia","img":"https://www.example.com/performer28.jpg"},
+{"id":"p29","name":"Performer 29","country":"Libya","img":"https://www.example.com/performer29.jpg"},
+{"id":"p30","name":"Performer 30","country":"Madagascar","img":"https://www.example.com/performer30.jpg"},
+{"id":"p31","name":"Performer 31","country":"Malawi","img":"https://www.example.com/performer31.jpg"},
+{"id":"p32","name":"Performer 32","country":"Mali","img":"https://www.example.com/performer32.jpg"},
+{"id":"p33","name":"Performer 33","country":"Mauritania","img":"https://www.example.com/performer33.jpg"},
+{"id":"p34","name":"Performer 34","country":"Mauritius","img":"https://www.example.com/performer34.jpg"},
+{"id":"p35","name":"Performer 35","country":"Morocco","img":"https://www.example.com/performer35.jpg"},
+{"id":"p36","name":"Performer 36","country":"Mozambique","img":"https://www.example.com/performer36.jpg"},
+{"id":"p37","name":"Performer 37","country":"Namibia","img":"https://www.example.com/performer37.jpg"},
+{"id":"p38","name":"Performer 38","country":"Niger","img":"https://www.example.com/performer38.jpg"},
+{"id":"p39","name":"Performer 39","country":"Nigeria","img":"https://www.example.com/performer39.jpg"},
+{"id":"p40","name":"Performer 40","country":"Rwanda","img":"https://www.example.com/performer40.jpg"},
+{"id":"p41","name":"Performer 41","country":"Sao Tome and Principe","img":"https://www.example.com/performer41.jpg"},
+{"id":"p42","name":"Performer 42","country":"Senegal","img":"https://www.example.com/performer42.jpg"},
+{"id":"p43","name":"Performer 43","country":"Seychelles","img":"https://www.example.com/performer43.jpg"},
+{"id":"p44","name":"Performer 44","country":"Sierra Leone","img":"https://www.example.com/performer44.jpg"},
+{"id":"p45","name":"Performer 45","country":"Somalia","img":"https://www.example.com/performer45.jpg"},
+{"id":"p46","name":"Performer 46","country":"South Africa","img":"https://www.example.com/performer46.jpg"},
+{"id":"p47","name":"Performer 47","country":"South Sudan","img":"https://www.example.com/performer47.jpg"},
+{"id":"p48","name":"Performer 48","country":"Sudan","img":"https://www.example.com/performer48.jpg"},
+{"id":"p49","name":"Performer 49","country":"Tanzania","img":"https://www.example.com/performer49.jpg"},
+{"id":"p50","name":"Performer 50","country":"Togo","img":"https://www.example.com/performer50.jpg"},
+{"id":"p51","name":"Performer 51","country":"Tunisia","img":"https://www.example.com/performer51.jpg"},
+{"id":"p52","name":"Performer 52","country":"Uganda","img":"https://www.example.com/performer52.jpg"},
+{"id":"p53","name":"Performer 53","country":"Zambia","img":"https://www.example.com/performer53.jpg"},
+{"id":"p54","name":"Performer 54","country":"Zimbabwe","img":"https://www.example.com/performer54.jpg"}
+];
+
+let votes = JSON.parse(localStorage.getItem('votes')) || {};
+performers.forEach(p => { if(votes[p.id]===undefined) votes[p.id]=0; });
+
+function initPage(){
+  const performerCards = document.getElementById('performer-cards');
+  const voteCards = document.getElementById('vote-cards');
+  performerCards.innerHTML='';
+  voteCards.innerHTML='';
+  
+  performers.forEach(p=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.id=p.id+'-card';
+    card.innerHTML=`<img src="${p.img}" alt="${p.name}"><p>${p.name} - ${p.country}</p>`;
+    performerCards.appendChild(card);
+
+    const vCard = document.createElement('div');
+    vCard.className='vote-card';
+    vCard.dataset.id=p.id;
+    vCard.innerHTML=`<img src="${p.img}" alt="${p.name}"><p>${p.name} - ${p.country}</p>
+                      <button onclick="vote('${p.id}')">Vote</button>
+                      <span id="${p.id}-count">${votes[p.id]}</span> Votes`;
+    voteCards.appendChild(vCard);
+  });
+
+  updateLeaderboard();
+}
+
+function vote(id){
+  votes[id]++;
+  localStorage.setItem('votes', JSON.stringify(votes));
+  document.getElementById(id+'-count').innerText=votes[id];
+  updateLeaderboard();
+  showToast('Thank you for voting!');
+}
+
+function updateLeaderboard(){
+  const list = document.getElementById('leaderboard-list');
+  list.innerHTML='';
+  const sorted = [...performers].sort((a,b)=>votes[b.id]-votes[a.id]);
+  const maxVotes = Math.max(...Object.values(votes));
+  
+  sorted.forEach(p=>{
+    const li = document.createElement('li');
+    li.dataset.id=p.id;
+    li.innerHTML=`${p.name} - ${p.country} : <span id="lb-${p.id}">${votes[p.id]}</span> votes`;
+    if(votes[p.id]===maxVotes && votes[p.id]>0) li.style.background='gold';
+    list.appendChild(li);
+  });
+}
+
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.innerText=msg;
+  toast.style.display='block';
+  setTimeout(()=>{toast.style.display='none'},2000);
+}
+
+document.addEventListener('DOMContentLoaded', initPage);
+</script>
